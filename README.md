@@ -1,5 +1,12 @@
 # node-red-contrib-azure-blob-storage-dynamic
 
+This repository is forked from [node-red-contrib-azure-blob-storage](https://github.com/Azure/node-red-contrib-azure).
+
+Some updates:
+- you can dynamically set the `containerName` and the `blobName` in the input msg object
+- both components will now return the original msg object back to the flow
+
+## Original README
 node-red-contrib-azure-blob-storage is a <a href="http://nodered.org" target="_new">Node-RED</a> node that allows you to work with Azure Blob Storage. You can create and delete Containers and also blob files.
 
 
@@ -61,8 +68,8 @@ Follow the instructions [here](http://nodered.org/docs/getting-started/installat
 
     If you leave the Storage Blob name blank, the text in the msg.payload will be used as your blob name. Eg. if your msg.payload is ```blob1.txt```, and the Storage Blob Name property is empty, the blob name will be assigned as ```blob1```
 
-    ![](images/save-blob-node-selected.PNG) 
-    
+    ![](images/save-blob-node-selected.PNG)
+
     ![](images/save-blob-node.PNG)
 
 7. Click Deploy
@@ -70,7 +77,7 @@ Follow the instructions [here](http://nodered.org/docs/getting-started/installat
     ![](images/deploy.png)
 
 8. Click the square button on the left side of the Save Payload node.
-    
+
     ![](images/save-payload.PNG)
 
 9. Click on the debug tab to your right and you'll see the output confirming that your data was sent.
@@ -90,8 +97,8 @@ Follow the instructions [here](http://nodered.org/docs/getting-started/installat
 
 3. Double-click the Azure Save Blob Storage node, enter your Storage Account Name, Storage Account Key and your desired Container Name and Blob Name. Now click Done.
 
-    ![](images/get-blob-node-selected.PNG) 
-    
+    ![](images/get-blob-node-selected.PNG)
+
     ![](images/save-blob-node.PNG)
 
 4. Click Deploy
@@ -99,7 +106,7 @@ Follow the instructions [here](http://nodered.org/docs/getting-started/installat
     ![](images/deploy.png)
 
 5. Click the square button on the left side of the Get Payload node.
-    
+
     ![](images/get-payload.PNG)
 
 6. Click on the debug tab to your right and you'll see the name of file that you just downloded to node-red local folder.
