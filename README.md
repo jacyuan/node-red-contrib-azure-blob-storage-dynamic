@@ -3,8 +3,11 @@
 This repository is forked from [node-red-contrib-azure-blob-storage](https://github.com/Azure/node-red-contrib-azure).
 
 Some updates:
-- you can dynamically set the `containerName` and the `blobName` in the input msg object
-- both components will now return the original msg object back to the flow
+
+- all components of this module will now return the original msg object back to the flow
+- a new component "Download to buffer" is added, which allows us to downloads and convert the blob file directly into a buffer object
+- you can dynamically set the `containerName` and the `blobName` in the msg object
+- you can set the `accountname` and `accountkey` through the NodeRed global configuration
 
 ## Original README
 node-red-contrib-azure-blob-storage is a <a href="http://nodered.org" target="_new">Node-RED</a> node that allows you to work with Azure Blob Storage. You can create and delete Containers and also blob files.

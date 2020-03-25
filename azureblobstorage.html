@@ -1,15 +1,15 @@
 <script type="text/javascript">
-  RED.nodes.registerType('Save Blob', {
+  RED.nodes.registerType('Upload Blob', {
     category: 'cloud',
     color: '#00abec',
     defaults: {
-      name: { value: "Azure Save Blob Storage" },
+      name: { value: "Azure Upload Blob Storage" },
     },
     inputs: 1,
     outputs: 1,
     icon: "azurestorage.png",
     label: function () {
-      return this.name || "Azure Save Blob Storage";
+      return this.name || "Azure Upload Blob Storage";
     },
     credentials: {
       accountname: { type: "text" },
@@ -19,17 +19,37 @@
     }
   });
 
-  RED.nodes.registerType('Get Blob', {
+  RED.nodes.registerType('Download to file', {
     category: 'cloud',
     color: '#00abec',
     defaults: {
-      name: { value: "Azure Get Blob Storage" },
+      name: { value: "Download to file" },
     },
     inputs: 1,
     outputs: 1,
     icon: "azurestorage.png",
     label: function () {
-      return this.name || "Azure Get Blob Storage";
+      return this.name || "Download to file";
+    },
+    credentials: {
+      accountname: { type: "text" },
+      key: { type: "text" },
+      container: { type: "text" },
+      blob: { type: "text" },
+    }
+  });
+
+  RED.nodes.registerType('Download to buffer', {
+    category: 'cloud',
+    color: '#00abec',
+    defaults: {
+      name: { value: "Download to buffer" },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "azurestorage.png",
+    label: function () {
+      return this.name || "Download to buffer";
     },
     credentials: {
       accountname: { type: "text" },
@@ -40,7 +60,7 @@
   });
 </script>
 
-<script type="text/x-red" data-template-name="Save Blob">
+<script type="text/x-red" data-template-name="Upload Blob">
     <div class="form-row">
         <label for="node-input-accountname"><i class="fa fa-bookmark"></i> Storage Account Name</label>
         <input type="text" id="node-input-accountname">
@@ -63,33 +83,60 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="Save Blob">
+<script type="text/x-red" data-help-name="Upload Blob">
     <p>A simple node that that makes it easy to consume and manage Microsoft Azure Storage Services</p>
 </script>
 
-<script type="text/x-red" data-template-name="Get Blob">
-    <div class="form-row">
-        <label for="node-input-accountname"><i class="fa fa-bookmark"></i> Storage Account Name</label>
-        <input type="text" id="node-input-accountname">
-    </div>
-    <div class="form-row">
-        <label for="node-input-key"><i class="fa fa-bookmark"></i> Storage Account Key</label>
-        <input type="text" id="node-input-key">
-    </div>
-    <div class="form-row">
-        <label for="node-input-container"><i class="fa fa-bookmark"></i> Storage Container Name</label>
-        <input type="text" id="node-input-container">
-    </div>
-    <div class="form-row">
-        <label for="node-input-blob"><i class="fa fa-bookmark"></i> Storage Blob Name</label>
-        <input type="text" id="node-input-blob">
-    </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
-    </div>
+<script type="text/x-red" data-template-name="Download to file">
+  <div class="form-row">
+      <label for="node-input-accountname"><i class="fa fa-bookmark"></i> Storage Account Name</label>
+      <input type="text" id="node-input-accountname">
+  </div>
+  <div class="form-row">
+      <label for="node-input-key"><i class="fa fa-bookmark"></i> Storage Account Key</label>
+      <input type="text" id="node-input-key">
+  </div>
+  <div class="form-row">
+      <label for="node-input-container"><i class="fa fa-bookmark"></i> Storage Container Name</label>
+      <input type="text" id="node-input-container">
+  </div>
+  <div class="form-row">
+      <label for="node-input-blob"><i class="fa fa-bookmark"></i> Storage Blob Name</label>
+      <input type="text" id="node-input-blob">
+  </div>
+  <div class="form-row">
+      <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+      <input type="text" id="node-input-name" placeholder="Name">
+  </div>
 </script>
 
-<script type="text/x-red" data-help-name="Get Blob">
-    <p>A simple node that that makes it easy to get blob from Azure Blob Storage</p>
+<script type="text/x-red" data-help-name="Download to file">
+  <p>A simple node that that makes it easy to get blob from Azure Blob Storage</p>
+</script>
+
+<script type="text/x-red" data-template-name="Download to buffer">
+  <div class="form-row">
+      <label for="node-input-accountname"><i class="fa fa-bookmark"></i> Storage Account Name</label>
+      <input type="text" id="node-input-accountname">
+  </div>
+  <div class="form-row">
+      <label for="node-input-key"><i class="fa fa-bookmark"></i> Storage Account Key</label>
+      <input type="text" id="node-input-key">
+  </div>
+  <div class="form-row">
+      <label for="node-input-container"><i class="fa fa-bookmark"></i> Storage Container Name</label>
+      <input type="text" id="node-input-container">
+  </div>
+  <div class="form-row">
+      <label for="node-input-blob"><i class="fa fa-bookmark"></i> Storage Blob Name</label>
+      <input type="text" id="node-input-blob">
+  </div>
+  <div class="form-row">
+      <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+      <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="Download to buffer">
+  <p>Get blob from Azure Blob Storage, and convert to a buffer object</p>
 </script>

@@ -84,7 +84,6 @@ module.exports = function (RED) {
       // Sending data to Azure Blob Storage
       setStatus(statusEnum.sending);
       createContainer(clientContainerName, blobService, function () {
-
         uploadBlob(msg.payload, blobService, clientContainerName, clientBlobName, function () {
           node.log("Upload completed!");
           node.send(msg);
@@ -154,6 +153,7 @@ module.exports = function (RED) {
       }
 
       node.log("destinationFile " + destinationFile);
+
       downloadBlob(blobservice, clientContainerName, clientBlobName, destinationFile, function () {
         node.log("Download completed!");
         node.send(msg);
@@ -178,6 +178,57 @@ module.exports = function (RED) {
     });
   }
 
+  function AzureBlobStorageDownloadToBufferObj(config) {
+    // Store node for further use
+    node = this;
+    nodeConfig = config;
+
+    node.credentials = node.credentials || {};
+
+    // Create the Node-RED node
+    RED.nodes.createNode(this, config);
+
+    clientAccountName = getBlobAccountInfo(node.credentials, 'accountname');
+    clientAccountKey = getBlobAccountInfo(node.credentials, 'key');
+
+    var blobservice = Client.createBlobService(clientAccountName, clientAccountKey);
+
+    this.on('input', function (msg, nodeSend, nodeDone) {
+      clientContainerName = node.credentials.container || msg.containerName;
+      clientBlobName = node.credentials.blob || msg.blobName;
+
+      node.log('Downloading blob...');
+      setStatus(statusEnum.receiving);
+
+      var lines = Buffer.from([]);
+
+      var rs = blobservice.createReadStream(clientContainerName, clientBlobName)
+        .on('data', function (chunk) {
+          lines = Buffer.concat([lines, chunk]);
+        })
+        .on('error', function (err) {
+          node.error(err, msg);
+          if (node.sendError) {
+            var sendMessage = RED.util.cloneMessage(msg);
+            delete sendMessage.payload;
+            sendMessage.error = err;
+            nodeSend(sendMessage);
+          }
+          nodeDone();
+        })
+        .on('end', function () {
+          msg.payload = lines;
+          nodeSend(msg);
+        });
+
+      setStatus(statusEnum.received);
+    });
+
+    this.on('close', function () {
+      disconnectFrom(this);
+    });
+  }
+
   function getBlobAccountInfo(credentials, infoPropName) {
     // check and return value from the node credentials first
     if (credentials && credentials[infoPropName]) {
@@ -192,8 +243,7 @@ module.exports = function (RED) {
     return undefined;
   }
 
-  // Registration of the node into Node-RED
-  RED.nodes.registerType("Save Blob", AzureBlobStorage, {
+  RED.nodes.registerType("Upload Blob", AzureBlobStorage, {
     credentials: {
       accountname: { type: "text" },
       key: { type: "text" },
@@ -201,12 +251,11 @@ module.exports = function (RED) {
       blob: { type: "text" },
     },
     defaults: {
-      name: { value: "Save in Blob Storage" },
+      name: { value: "Upload to Blob Storage" },
     }
   });
 
-  // Registration of the node into Node-RED to download
-  RED.nodes.registerType("Get Blob", AzureBlobStorageDownload, {
+  RED.nodes.registerType("Download to file", AzureBlobStorageDownload, {
     credentials: {
       accountname: { type: "text" },
       key: { type: "text" },
@@ -214,10 +263,21 @@ module.exports = function (RED) {
       blob: { type: "text" },
     },
     defaults: {
-      name: { value: "Get Blob Storage" },
+      name: { value: "Download to file" },
     }
   });
 
+  RED.nodes.registerType("Download to buffer", AzureBlobStorageDownloadToBufferObj, {
+    credentials: {
+      accountname: { type: "text" },
+      key: { type: "text" },
+      container: { type: "text" },
+      blob: { type: "text" },
+    },
+    defaults: {
+      name: { value: "Download to buffer" },
+    }
+  });
 
   // Helper function to print results in the console
   function printResultFor(op) {
