@@ -60,10 +60,12 @@ module.exports = function (RED) {
     node = this;
     nodeConfig = config;
 
+    node.credentials = node.credentials || {};
+
     // Create the Node-RED node
     RED.nodes.createNode(this, config);
-    clientAccountName = this.credentials.accountname;
-    clientAccountKey = this.credentials.key;
+    clientAccountName = getBlobAccountInfo(node.credentials, 'accountname');
+    clientAccountKey = getBlobAccountInfo(node.credentials, 'key');
 
     var blobService = Client.createBlobService(clientAccountName, clientAccountKey);
 
@@ -71,10 +73,10 @@ module.exports = function (RED) {
       node.log("Uploading blob...");
       var messageJSON = null;
 
-      clientContainerName = this.credentials.container || msg.containerName;
-      clientBlobName = this.credentials.blob;
+      clientContainerName = node.credentials.container || msg.containerName;
+      clientBlobName = node.credentials.blob;
 
-      if (!this.credentials.blob) {
+      if (!node.credentials.blob) {
         var nameObject = path.parse(msg.blobName);
         clientBlobName = nameObject.base;
       }
@@ -125,10 +127,12 @@ module.exports = function (RED) {
     node = this;
     nodeConfig = config;
 
+    node.credentials = node.credentials || {};
+
     // Create the Node-RED node
     RED.nodes.createNode(this, config);
-    clientAccountName = node.credentials.accountname;
-    clientAccountKey = node.credentials.key;
+    clientAccountName = getBlobAccountInfo(node.credentials, 'accountname');
+    clientAccountKey = getBlobAccountInfo(node.credentials, 'key');
 
     var blobservice = Client.createBlobService(clientAccountName, clientAccountKey);
     var destinationFile;
@@ -172,6 +176,20 @@ module.exports = function (RED) {
         callback();
       }
     });
+  }
+
+  function getBlobAccountInfo(credentials, infoPropName) {
+    // check and return value from the node credentials first
+    if (credentials && credentials[infoPropName]) {
+      return credentials[infoPropName];
+    }
+
+    // check and return value from the global CONFIG if exists
+    if(CONFIG.blob_storage) {
+      return CONFIG.blob_storage[infoPropName];
+    }
+
+    return undefined;
   }
 
   // Registration of the node into Node-RED
